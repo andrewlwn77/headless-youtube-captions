@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] - 2025-06-10
+
+### Added
+- TypeScript declaration files for improved TypeScript support
+- Type definitions for `getSubtitles` function and return types
+
 ## [1.0.0] - 2025-01-06
 
 ### Added
