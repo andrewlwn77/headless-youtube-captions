@@ -1,0 +1,41 @@
+{
+  "name": "headless-youtube-captions",
+  "version": "1.0.0",
+  "description": "Extract YouTube video transcripts using headless browser automation",
+  "main": "src/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": {
+    "name": "andrewlwn77"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrewlwn77/headless-youtube-captions.git"
+  },
+  "homepage": "https://github.com/andrewlwn77/headless-youtube-captions",
+  "bugs": {
+    "url": "https://github.com/andrewlwn77/headless-youtube-captions/issues"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "he": "^1.2.0",
+    "lodash": "^4.17.21",
+    "puppeteer": "^24.10.0",
+    "striptags": "^3.2.0"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "youtube",
+    "captions",
+    "subtitles",
+    "transcript",
+    "puppeteer",
+    "headless",
+    "scraper"
+  ]
+}
