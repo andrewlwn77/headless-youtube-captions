@@ -21,7 +21,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     
     // Navigate to the YouTube video page
-    console.log(`Navigating to https://youtube.com/watch?v=${videoID}`);
+    console.error(`Navigating to https://youtube.com/watch?v=${videoID}`);
     await page.goto(`https://youtube.com/watch?v=${videoID}`, {
       waitUntil: 'networkidle2',
       timeout: 60000
@@ -29,7 +29,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
 
     // Wait for initial page load
     await page.waitForSelector('#movie_player, video', { timeout: 30000 });
-    console.log('Video player loaded');
+    console.error('Video player loaded');
 
     // Wait a bit more for dynamic content to load
     await new Promise(resolve => setTimeout(resolve, 5000));
@@ -39,7 +39,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
       const consentButton = await page.$('[aria-label*="Accept all"], [aria-label*="Accept cookies"], button:has-text("Accept all")');
       if (consentButton) {
         await consentButton.click();
-        console.log('Accepted cookies');
+        console.error('Accepted cookies');
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     } catch (e) {
@@ -51,7 +51,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
       const skipButton = await page.$('.ytp-ad-skip-button, .ytp-skip-ad-button');
       if (skipButton) {
         await skipButton.click();
-        console.log('Skipped ad');
+        console.error('Skipped ad');
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
     } catch (e) {
@@ -85,7 +85,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
             
             if (isVisible) {
               await moreButton.click();
-              console.log('Clicked "more" button');
+              console.error('Clicked "more" button');
               await new Promise(resolve => setTimeout(resolve, 1000));
               break;
             }
@@ -95,11 +95,11 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
         }
       }
     } catch (e) {
-      console.log('No "more" button found or error clicking it');
+      console.error('No "more" button found or error clicking it');
     }
 
     // Look for and click the "Show transcript" button
-    console.log('Looking for "Show transcript" button...');
+    console.error('Looking for "Show transcript" button...');
     
     // Multiple strategies to find the transcript button
     const transcriptButtonSelectors = [
@@ -118,7 +118,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
       try {
         await page.waitForSelector(selector, { timeout: 3000, visible: true });
         await page.click(selector);
-        console.log(`Clicked transcript button with selector: ${selector}`);
+        console.error(`Clicked transcript button with selector: ${selector}`);
         transcriptClicked = true;
         break;
       } catch (e) {
@@ -128,7 +128,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
 
     if (!transcriptClicked) {
       // Try finding by text content
-      console.log('Trying to find transcript button by text...');
+      console.error('Trying to find transcript button by text...');
       const clicked = await page.evaluate(() => {
         const buttons = Array.from(document.querySelectorAll('button, yt-button-shape'));
         for (const button of buttons) {
@@ -143,7 +143,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
       });
       
       if (clicked) {
-        console.log('Clicked transcript button by text search');
+        console.error('Clicked transcript button by text search');
         transcriptClicked = true;
       }
     }
@@ -153,7 +153,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
     }
 
     // Wait for the transcript panel to load
-    console.log('Waiting for transcript panel...');
+    console.error('Waiting for transcript panel...');
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     // Wait for transcript segments
@@ -163,7 +163,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
     });
 
     // Extract transcript data
-    console.log('Extracting transcript content...');
+    console.error('Extracting transcript content...');
     const transcriptData = await page.evaluate(() => {
       // Multiple selectors for transcript segments
       const segmentSelectors = [
@@ -178,7 +178,6 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
       for (const selector of segmentSelectors) {
         segments = document.querySelectorAll(selector);
         if (segments.length > 0) {
-          console.log(`Found ${segments.length} segments with selector: ${selector}`);
           break;
         }
       }
@@ -186,7 +185,6 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
       if (segments.length === 0) {
         // Try a more general approach
         segments = document.querySelectorAll('[class*="transcript"][class*="segment"]');
-        console.log(`Found ${segments.length} segments with general selector`);
       }
 
       if (segments.length === 0) {
@@ -262,8 +260,8 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
       throw new Error('No transcript data extracted');
     }
 
-    console.log(`Successfully extracted ${transcriptData.length} transcript segments`);
-    console.log('First segment:', transcriptData[0]);
+    console.error(`Successfully extracted ${transcriptData.length} transcript segments`);
+    console.error('First segment:', transcriptData[0]);
 
     // Calculate proper durations
     const processedCaptions = transcriptData.map((item, index) => {
