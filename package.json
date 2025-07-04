@@ -1,6 +1,6 @@
 {
   "name": "headless-youtube-captions",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Extract YouTube video transcripts, channel videos, and comments using headless browser automation",
   "main": "src/index.js",
   "types": "src/index.d.ts",
