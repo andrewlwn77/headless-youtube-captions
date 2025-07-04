@@ -1,0 +1,23 @@
+# Test files
+test/
+*.test.js
+
+# Examples
+examples/
+
+# Development files
+.git/
+.gitignore
+CLAUDE.md
+.claude/
+.mcp.json
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
