@@ -1,7 +1,7 @@
 {
   "name": "headless-youtube-captions",
   "version": "1.0.2",
-  "description": "Extract YouTube video transcripts using headless browser automation",
+  "description": "Extract YouTube video transcripts, channel videos, and comments using headless browser automation",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "type": "module",
@@ -35,8 +35,12 @@
     "captions",
     "subtitles",
     "transcript",
+    "comments",
+    "channel",
+    "videos",
     "puppeteer",
     "headless",
-    "scraper"
+    "scraper",
+    "api"
   ]
 }

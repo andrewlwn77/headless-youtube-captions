@@ -1,24 +1,11 @@
-import he from 'he';
-import lodash from 'lodash';
-import striptags from 'striptags';
-import puppeteer from 'puppeteer';
+import { createBrowser, createPage, handleCookieConsent, skipAds } from './utils/browser.js';
 
-const { find } = lodash;
-
+// Export existing function
 export async function getSubtitles({ videoID, lang = 'en' }) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=1920,1080', '--disable-dev-shm-usage']
-  });
+  const browser = await createBrowser();
 
   try {
-    const page = await browser.newPage();
-    
-    // Set viewport to a standard desktop size
-    await page.setViewport({ width: 1920, height: 1080 });
-    
-    // Set a realistic user agent
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    const page = await createPage(browser);
     
     // Navigate to the YouTube video page
     console.error(`Navigating to https://youtube.com/watch?v=${videoID}`);
@@ -35,28 +22,10 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     // Handle cookie consent if present
-    try {
-      const consentButton = await page.$('[aria-label*="Accept all"], [aria-label*="Accept cookies"], button:has-text("Accept all")');
-      if (consentButton) {
-        await consentButton.click();
-        console.error('Accepted cookies');
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-    } catch (e) {
-      // Cookie consent not present or already accepted
-    }
+    await handleCookieConsent(page);
 
     // Skip ads if present
-    try {
-      const skipButton = await page.$('.ytp-ad-skip-button, .ytp-skip-ad-button');
-      if (skipButton) {
-        await skipButton.click();
-        console.error('Skipped ad');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-    } catch (e) {
-      // No skip button
-    }
+    await skipAds(page);
 
     // Scroll down to load more content
     await page.evaluate(() => window.scrollBy(0, 800));
@@ -286,3 +255,7 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
     await browser.close();
   }
 }
+
+// Export new functions
+export { getChannelVideos, searchChannelVideos } from './channel.js';
+export { getVideoComments } from './comments.js';
