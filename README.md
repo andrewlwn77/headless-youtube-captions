@@ -1,6 +1,21 @@
 # Headless YouTube Captions
 
+[![npm version](https://badge.fury.io/js/headless-youtube-captions.svg)](https://www.npmjs.com/package/headless-youtube-captions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/headless-youtube-captions.svg)](https://nodejs.org)
+
 > Extract YouTube video transcripts, channel videos, and comments by interacting with YouTube's UI using Puppeteer
+
+## Features
+
+- 🎯 Extract video transcripts/captions in multiple languages
+- 📺 Get channel videos with pagination support
+- 🔍 Search videos within a specific channel
+- 💬 Extract video comments with sorting options
+- 🐳 Docker support with configurable Chrome executable path
+- 📦 Zero build dependencies - runs directly from source
+- 🚀 Modern ES modules with async/await
+- 🛡️ Handles cookie consent and ad skipping automatically
 
 ## Installation
 
@@ -126,8 +141,57 @@ This library uses Puppeteer to:
 
 ## Requirements
 
-- Node.js 12 or higher
+- Node.js 18 or higher (ES modules support required)
 - Puppeteer (installed as a dependency)
+
+## Docker Usage
+
+When running in Docker containers, you may need to specify the Chrome executable path using the `PUPPETEER_EXECUTABLE_PATH` environment variable:
+
+```bash
+# Set the environment variable
+export PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+
+# Or run directly
+PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable node your-script.js
+```
+
+Example Dockerfile configuration:
+```dockerfile
+# Install Chrome dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxkbcommon0 \
+    libxrandr2 \
+    xdg-utils
+
+# Install Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the Chrome executable path
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+```
 
 ## Error Handling
 

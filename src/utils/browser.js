@@ -1,10 +1,17 @@
 import puppeteer from 'puppeteer';
 
 export async function createBrowser() {
-  return await puppeteer.launch({
+  const options = {
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=1920,1080', '--disable-dev-shm-usage']
-  });
+  };
+  
+  // Add executablePath if environment variable is set
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    options.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+  }
+  
+  return await puppeteer.launch(options);
 }
 
 export async function createPage(browser) {
