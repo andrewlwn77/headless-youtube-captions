@@ -11,6 +11,7 @@
 - 🎯 Extract video transcripts/captions in multiple languages
 - 📺 Get channel videos with pagination support
 - 🔍 Search videos within a specific channel
+- 🌍 **NEW**: Search across all of YouTube globally
 - 💬 Extract video comments with sorting options
 - 🐳 Docker support with configurable Chrome executable path
 - 📦 Zero build dependencies - runs directly from source
@@ -59,6 +60,19 @@ const result = await searchChannelVideos({
   channelURL: '@mkbhd',
   query: 'iphone review',
   limit: 20              // Optional, default: 30
+});
+
+console.log(result.results);
+```
+
+### Search YouTube Globally
+```js
+import { searchYouTubeGlobal } from 'headless-youtube-captions';
+
+const result = await searchYouTubeGlobal({
+  query: 'javascript tutorial',
+  maxResults: 10,         // Optional, 1-20, default: 10
+  resultTypes: ['videos'] // Optional, ['videos', 'channels', 'all'], default: ['all']
 });
 
 console.log(result.results);
@@ -331,6 +345,56 @@ Extract comments from a YouTube video with pagination support.
   sortBy: "top"
 }
 ```
+
+### `searchYouTubeGlobal(options)`
+
+Search across all of YouTube for videos and channels.
+
+#### Parameters
+
+- `options` (Object):
+  - `query` (String, required): Search term to find content
+  - `maxResults` (Number, optional): Maximum results to return (1-20). Default: `10`
+  - `resultTypes` (Array, optional): Types of results to include. Options: `['videos']`, `['channels']`, `['all']`. Default: `['all']`
+
+#### Returns
+
+```js
+{
+  query: "javascript tutorial",
+  resultTypes: ["videos"],
+  maxResults: 10,
+  totalFound: 8,
+  results: [
+    {
+      id: "videoId123",
+      type: "video",
+      title: "JavaScript Tutorial for Beginners",
+      url: "https://youtube.com/watch?v=videoId123",
+      channel: "Code Academy",
+      views: "2.1M views",
+      uploadTime: "1 year ago",
+      duration: "1:23:45",
+      thumbnail: "https://i.ytimg.com/vi/..."
+    },
+    {
+      id: "channelId456", 
+      type: "channel",
+      title: "JavaScript Mastery",
+      url: "https://youtube.com/@javascriptmastery",
+      subscribers: "1.2M subscribers",
+      videoCount: "200 videos",
+      thumbnail: "https://yt3.ggpht.com/..."
+    }
+    // ... more results
+  ]
+}
+```
+
+#### Result Types
+
+- **Video Results** include: `id`, `type`, `title`, `url`, `channel`, `views`, `uploadTime`, `duration`, `thumbnail`
+- **Channel Results** include: `id`, `type`, `title`, `url`, `subscribers`, `videoCount`, `thumbnail`
 
 ## License
 

@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.3.0] - 2025-01-24
+
+### Added
+- **NEW**: `searchYouTubeGlobal()` function for searching across all of YouTube
+  - Search for videos and channels globally using any search term
+  - Configurable result types: videos, channels, or both
+  - Adjustable result limits (1-20 results)
+  - Returns structured data with video metadata (title, channel, views, duration, etc.)
+  - Returns structured data with channel metadata (title, subscribers, video count, etc.)
+  - Uses validated DOM selectors for reliable extraction
+  - Consistent API design matching existing functions
+
+### Technical Details
+- Added `src/search.js` with comprehensive YouTube search automation
+- Updated TypeScript definitions with new search interfaces
+- Enhanced exports in main index file
+- Maintains existing browser management and error handling patterns
+
 ## [1.2.0] - 2025-07-06
 
 ### Added

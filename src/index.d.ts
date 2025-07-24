@@ -164,3 +164,58 @@ export interface VideoCommentsResult {
  * @returns Promise that resolves to video comments result
  */
 export function getVideoComments(options: GetVideoCommentsOptions): Promise<VideoCommentsResult>;
+
+// Types for global YouTube search
+export interface SearchResult {
+  /** Result ID (video ID or channel ID) */
+  id: string;
+  /** Result type */
+  type: 'video' | 'channel';
+  /** Title of the video or channel */
+  title: string;
+  /** Full YouTube URL */
+  url: string;
+  /** Thumbnail URL */
+  thumbnail: string;
+  /** Channel name (for videos) */
+  channel?: string;
+  /** View count (for videos) */
+  views?: string;
+  /** Upload time (for videos) */
+  uploadTime?: string;
+  /** Duration (for videos) */
+  duration?: string;
+  /** Subscriber count (for channels) */
+  subscribers?: string;
+  /** Video count (for channels) */
+  videoCount?: string;
+}
+
+export interface SearchYouTubeGlobalOptions {
+  /** Search query */
+  query: string;
+  /** Maximum number of results to return (1-20, default: 10) */
+  maxResults?: number;
+  /** Types of results to include (default: ['all']) */
+  resultTypes?: ('videos' | 'channels' | 'all')[];
+}
+
+export interface SearchYouTubeGlobalResult {
+  /** Search query used */
+  query: string;
+  /** Result types requested */
+  resultTypes: ('videos' | 'channels' | 'all')[];
+  /** Maximum results requested */
+  maxResults: number;
+  /** Total results found */
+  totalFound: number;
+  /** Array of search results */
+  results: SearchResult[];
+}
+
+/**
+ * Search across all of YouTube for videos and channels
+ * @param options - Configuration options
+ * @returns Promise that resolves to global search results
+ */
+export function searchYouTubeGlobal(options: SearchYouTubeGlobalOptions): Promise<SearchYouTubeGlobalResult>;
