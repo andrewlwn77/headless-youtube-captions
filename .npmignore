@@ -11,6 +11,9 @@ examples/
 CLAUDE.md
 .claude/
 .mcp.json
+.bmad-history/
+bmad-immediate/
+docs/
 
 # Logs
 *.log

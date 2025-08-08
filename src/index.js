@@ -260,3 +260,4 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
 export { getChannelVideos, searchChannelVideos } from './channel.js';
 export { getVideoComments } from './comments.js';
 export { searchYouTubeGlobal } from './search.js';
+export { getVideoMetadata } from './metadata.js';

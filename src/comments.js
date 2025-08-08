@@ -113,17 +113,86 @@ export async function getVideoComments({ videoID, limit = 50, sortBy = 'top', pa
     
     console.error(`Successfully extracted ${resultComments.length} comments`);
     
-    // Extract video info
+    // Extract enhanced video info
     const videoInfo = await page.evaluate(() => {
-      const titleElement = document.querySelector('h1.ytd-video-primary-info-renderer');
-      const title = titleElement ? titleElement.textContent.trim() : '';
+      // Video title with multiple selectors
+      const titleSelectors = [
+        'h1.ytd-video-primary-info-renderer yt-formatted-string',
+        'h1.ytd-video-primary-info-renderer',
+        '#title h1'
+      ];
+      let title = '';
+      for (const selector of titleSelectors) {
+        const element = document.querySelector(selector);
+        if (element && element.textContent) {
+          title = element.textContent.trim();
+          break;
+        }
+      }
       
-      const channelElement = document.querySelector('ytd-channel-name a');
-      const channelName = channelElement ? channelElement.textContent.trim() : '';
-      const channelUrl = channelElement ? channelElement.href : '';
+      // Channel info with multiple selectors
+      const channelSelectors = [
+        '#owner-name a',
+        '.ytd-channel-name a',
+        'ytd-channel-name a'
+      ];
+      let channelName = '';
+      let channelUrl = '';
+      for (const selector of channelSelectors) {
+        const element = document.querySelector(selector);
+        if (element && element.textContent) {
+          channelName = element.textContent.trim();
+          channelUrl = element.href || '';
+          break;
+        }
+      }
       
-      const viewsElement = document.querySelector('.view-count');
-      const views = viewsElement ? viewsElement.textContent : '';
+      // Enhanced view count
+      const viewSelectors = [
+        '#info .view-count',
+        '.view-count',
+        '.ytd-video-primary-info-renderer .view-count'
+      ];
+      let views = '';
+      for (const selector of viewSelectors) {
+        const element = document.querySelector(selector);
+        if (element && element.textContent) {
+          views = element.textContent.trim();
+          break;
+        }
+      }
+      
+      // Upload date
+      const uploadDateSelectors = [
+        '#info-strings yt-formatted-string',
+        '#info .date',
+        '.ytd-video-primary-info-renderer #info-strings'
+      ];
+      let uploadDate = '';
+      for (const selector of uploadDateSelectors) {
+        const element = document.querySelector(selector);
+        if (element && element.textContent) {
+          uploadDate = element.textContent.trim();
+          break;
+        }
+      }
+      
+      // Like count  
+      const likeSelectors = [
+        '#top-level-buttons-computed button[aria-label*="like"] span',
+        '#segmented-like-button span'
+      ];
+      let likeCount = '';
+      for (const selector of likeSelectors) {
+        const element = document.querySelector(selector);
+        if (element && element.textContent) {
+          const text = element.textContent.trim();
+          if (text && !text.includes('LIKE')) {
+            likeCount = text;
+            break;
+          }
+        }
+      }
       
       return {
         title,
@@ -131,7 +200,9 @@ export async function getVideoComments({ videoID, limit = 50, sortBy = 'top', pa
           name: channelName,
           url: channelUrl
         },
-        views
+        views,
+        uploadDate,
+        likeCount
       };
     });
     

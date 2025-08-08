@@ -1,7 +1,7 @@
 {
   "name": "headless-youtube-captions",
-  "version": "1.3.0",
-  "description": "Extract YouTube video transcripts, channel videos, and comments using headless browser automation",
+  "version": "1.4.0",
+  "description": "Extract YouTube video transcripts, channel videos, comments, and comprehensive video metadata using headless browser automation",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "type": "module",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/andrewlwn77/headless-youtube-captions.git"
+    "url": "git+https://github.com/andrewlwn77/headless-youtube-captions.git"
   },
   "homepage": "https://github.com/andrewlwn77/headless-youtube-captions",
   "bugs": {
@@ -39,6 +39,8 @@
     "comments",
     "channel",
     "videos",
+    "metadata",
+    "description",
     "puppeteer",
     "headless",
     "scraper",
