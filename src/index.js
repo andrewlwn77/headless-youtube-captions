@@ -31,31 +31,32 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
     await page.evaluate(() => window.scrollBy(0, 800));
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Click on "more" to expand description if needed
+    // Click on description to expand it
     try {
-      // Multiple selectors for the more button
-      const moreSelectors = [
+      // Click on the description container directly - YouTube's new UI
+      const descriptionExpandSelectors = [
+        '#description-inline-expander',
+        'ytd-text-inline-expander',
+        'ytd-watch-metadata #description',
+        '#description',
         'tp-yt-paper-button#expand',
         'tp-yt-paper-button[id="expand"]',
-        '#expand',
-        '#more',
-        'yt-formatted-string:has-text("...more")',
-        '[aria-label*="more"]'
+        '#expand'
       ];
-      
-      for (const selector of moreSelectors) {
+
+      for (const selector of descriptionExpandSelectors) {
         try {
-          const moreButton = await page.$(selector);
-          if (moreButton) {
-            const isVisible = await moreButton.evaluate(el => {
+          const descElement = await page.$(selector);
+          if (descElement) {
+            const isVisible = await descElement.evaluate(el => {
               const rect = el.getBoundingClientRect();
               return rect.width > 0 && rect.height > 0;
             });
-            
+
             if (isVisible) {
-              await moreButton.click();
-              console.error('Clicked "more" button');
-              await new Promise(resolve => setTimeout(resolve, 1000));
+              await descElement.click();
+              console.error(`Clicked description to expand with selector: ${selector}`);
+              await new Promise(resolve => setTimeout(resolve, 2000));
               break;
             }
           }
@@ -64,12 +65,16 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
         }
       }
     } catch (e) {
-      console.error('No "more" button found or error clicking it');
+      console.error('Could not expand description:', e.message);
     }
+
+    // Scroll down more to ensure transcript button area is visible
+    await page.evaluate(() => window.scrollBy(0, 400));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Look for and click the "Show transcript" button
     console.error('Looking for "Show transcript" button...');
-    
+
     // Multiple strategies to find the transcript button
     const transcriptButtonSelectors = [
       'button[aria-label="Show transcript"]',
@@ -82,15 +87,35 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
     ];
 
     let transcriptClicked = false;
-    
+
     for (const selector of transcriptButtonSelectors) {
       try {
-        await page.waitForSelector(selector, { timeout: 3000, visible: true });
+        // Try to find the element first
+        const button = await page.$(selector);
+        if (!button) {
+          continue;
+        }
+
+        // Check if visible
+        const isVisible = await button.evaluate(el => {
+          const rect = el.getBoundingClientRect();
+          return rect.width > 0 && rect.height > 0;
+        });
+
+        if (!isVisible) {
+          // Try to scroll button into view
+          await button.evaluate(el => el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        // Use page.click() which is more reliable than element.click()
         await page.click(selector);
         console.error(`Clicked transcript button with selector: ${selector}`);
         transcriptClicked = true;
+        await new Promise(resolve => setTimeout(resolve, 2000));
         break;
       } catch (e) {
+        console.error(`Selector ${selector} failed:`, e.message);
         // Try next selector
       }
     }
@@ -123,12 +148,11 @@ export async function getSubtitles({ videoID, lang = 'en' }) {
 
     // Wait for the transcript panel to load
     console.error('Waiting for transcript panel...');
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     // Wait for transcript segments
-    await page.waitForSelector('ytd-transcript-segment-renderer, ytd-transcript-body-renderer', { 
-      timeout: 10000,
-      visible: true 
+    await page.waitForSelector('ytd-transcript-segment-renderer', {
+      timeout: 15000
     });
 
     // Extract transcript data

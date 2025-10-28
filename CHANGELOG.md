@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.4.1] - 2025-10-28
+
+### Fixed
+- **CRITICAL FIX**: Transcript extraction now works reliably with YouTube's current UI
+  - Fixed description expansion to click on container directly instead of "more" button
+  - Added visibility checks before clicking transcript button
+  - Improved scroll behavior to ensure transcript button is in viewport
+  - Increased wait times for transcript panel initialization (3s → 5s)
+  - Increased timeout for segment loading (10s → 15s)
+  - Better error logging for debugging click failures
+
+### Changed
+- Updated test suite to use video with stable, reliable transcripts
+- Improved transcript button click reliability using `page.click(selector)`
+- Added scroll-into-view for transcript button when not visible
+- Enhanced description expansion with more selector options
+
+### Technical Details
+- Updated `src/index.js` with improved UI interaction logic
+- Updated `test/index.test.js` to use `dQw4w9WgXcQ` (stable test video)
+- All 7 tests now passing successfully
+- Added comprehensive documentation in `docs/` folder:
+  - `action-flow-runbook.csv` - Complete action flow with fix notes
+  - `transcript-fix-analysis.md` - Detailed technical analysis
+  - `fix-summary.md` - Summary of changes
+
 ## [1.3.0] - 2025-01-24
 
 ### Added
